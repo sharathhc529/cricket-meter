@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="ballGrad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="60%" stop-color="#b91c1c" />
+      <stop offset="100%" stop-color="#7f1d1d" />
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="46" fill="url(#ballGrad)" stroke="#450a0a" stroke-width="2"/>
+  <!-- Cricket Seam -->
+  <path d="M 50 4 C 36 28, 36 72, 50 96" fill="none" stroke="#fef08a" stroke-width="2.5" stroke-dasharray="2,2"/>
+  <path d="M 50 4 C 64 28, 64 72, 50 96" fill="none" stroke="#fef08a" stroke-width="2.5" stroke-dasharray="2,2"/>
+  <path d="M 50 4 C 50 28, 50 72, 50 96" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+</svg>
