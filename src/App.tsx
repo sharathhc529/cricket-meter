@@ -11,9 +11,21 @@ import { ParameterSliders } from './components/ParameterSliders';
 import { ComparisonModal } from './components/ComparisonModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { NewPlayerModal } from './components/NewPlayerModal';
-import { Sparkles, Trophy, ShieldAlert, Award, ArrowUpRight, Flame, Lightbulb } from 'lucide-react';
+import { SectionVisibilityBar, SectionVisibilityState } from './components/SectionVisibilityBar';
+import {
+  Trophy,
+  Lightbulb,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  ChevronUp,
+  BarChart3,
+  LayoutDashboard,
+  SlidersHorizontal,
+} from 'lucide-react';
 
 const STORAGE_KEY = 'cricmeter_players_v1';
+const VISIBILITY_STORAGE_KEY = 'cricmeter_visibility_v1';
 
 export const App: React.FC = () => {
   // Load saved cricketers from localStorage or use defaults
@@ -34,12 +46,28 @@ export const App: React.FC = () => {
     return players[0]?.id || 'virat-kohli';
   });
 
+  // Section show / hide mechanism state
+  const [visibility, setVisibility] = useState<SectionVisibilityState>(() => {
+    try {
+      const saved = localStorage.getItem(VISIBILITY_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (err) {
+      console.error('Error reading visibility', err);
+    }
+    return {
+      showOverview: true,
+      showCharts: true,
+      showStrengths: true,
+      showParameters: true,
+    };
+  });
+
   // Modals state
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isExportImportModalOpen, setIsExportImportModalOpen] = useState(false);
   const [isNewPlayerModalOpen, setIsNewPlayerModalOpen] = useState(false);
 
-  // Sync to localStorage
+  // Sync players to localStorage
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
@@ -47,6 +75,15 @@ export const App: React.FC = () => {
       console.error('Failed to save to localStorage', err);
     }
   }, [players]);
+
+  // Sync visibility to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(visibility));
+    } catch (err) {
+      console.error('Failed to save visibility to localStorage', err);
+    }
+  }, [visibility]);
 
   // Current active player
   const activePlayer = useMemo(() => {
@@ -57,6 +94,52 @@ export const App: React.FC = () => {
   const metrics = useMemo(() => {
     return calculateStrengthMetrics(activePlayer);
   }, [activePlayer]);
+
+  // Toggle individual section
+  const handleToggleSection = (key: keyof SectionVisibilityState) => {
+    setVisibility((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  // Section visibility presets
+  const handleSetPreset = (preset: 'all' | 'charts' | 'assessment' | 'compact') => {
+    switch (preset) {
+      case 'all':
+        setVisibility({
+          showOverview: true,
+          showCharts: true,
+          showStrengths: true,
+          showParameters: true,
+        });
+        break;
+      case 'charts':
+        setVisibility({
+          showOverview: true,
+          showCharts: true,
+          showStrengths: true,
+          showParameters: false,
+        });
+        break;
+      case 'assessment':
+        setVisibility({
+          showOverview: true,
+          showCharts: false,
+          showStrengths: false,
+          showParameters: true,
+        });
+        break;
+      case 'compact':
+        setVisibility({
+          showOverview: true,
+          showCharts: true,
+          showStrengths: false,
+          showParameters: false,
+        });
+        break;
+    }
+  };
 
   // Update a parameter
   const handleChangeParameter = (key: keyof PlayerParameters, value: number) => {
@@ -159,75 +242,150 @@ export const App: React.FC = () => {
           onSelectPlayer={(id) => setActivePlayerId(id)}
         />
 
-        {/* 4 Core Summary Cards (OVR, Extras Pressure Meter, Field Side, Scenarios IQ) */}
-        <OverviewCards player={activePlayer} metrics={metrics} />
-
-        {/* 2-Column Visual Charts Row (Spider Radar Chart + Cricket Wagon Wheel) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RadarChart player={activePlayer} metrics={metrics} />
-          <WagonWheelChart player={activePlayer} metrics={metrics} />
-        </div>
-
-        {/* Strengths & Development Areas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Top 3 Superpowers */}
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 mb-3">
-              <Trophy className="w-3.5 h-3.5" /> Top 3 Key Strengths
-            </h3>
-            <div className="space-y-2">
-              {metrics.topStrengths.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xs font-black">
-                      #{idx + 1}
-                    </span>
-                    <span className="text-xs font-bold text-white">{item.title}</span>
-                  </div>
-                  <span className="text-xs font-mono font-black text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
-                    {item.value} / 100
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Key Areas to Develop & Drills */}
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-3">
-              <Lightbulb className="w-3.5 h-3.5" /> Key Areas for Development & Drills
-            </h3>
-            <div className="space-y-2">
-              {metrics.areasToImprove.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80"
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-slate-200">{item.title}</span>
-                    <span className="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60">
-                      {item.value} / 100
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 leading-tight">
-                    💡 <span className="font-semibold text-slate-300">Drill:</span> {item.tip}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* 20 Parameter Sliders & Field Sectors Tuning */}
-        <ParameterSliders
-          player={activePlayer}
-          onChangeParameter={handleChangeParameter}
-          onChangeFieldSector={handleChangeFieldSector}
-          onQuickPreset={handleQuickPreset}
+        {/* Show / Hide Row Mechanism Toolbar */}
+        <SectionVisibilityBar
+          visibility={visibility}
+          onToggleSection={handleToggleSection}
+          onSetPreset={handleSetPreset}
         />
+
+        {/* 1. Overview & Scorecard Row */}
+        {visibility.showOverview && (
+          <section className="space-y-2 transition-all duration-300">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <LayoutDashboard className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Overall Capability & Pressure Analysis</span>
+              </span>
+              <button
+                onClick={() => handleToggleSection('showOverview')}
+                className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1 cursor-pointer"
+              >
+                <span>Hide Row</span>
+                <EyeOff className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <OverviewCards player={activePlayer} metrics={metrics} />
+          </section>
+        )}
+
+        {/* 2. Visual Charts Row (Spider Radar Chart + Batting Wagon Wheel) */}
+        {visibility.showCharts && (
+          <section className="space-y-2 transition-all duration-300">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <BarChart3 className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Visual Metrics: Skill Radar & Batting Wagon Wheel</span>
+              </span>
+              <button
+                onClick={() => handleToggleSection('showCharts')}
+                className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1 cursor-pointer"
+              >
+                <span>Hide Graphs</span>
+                <EyeOff className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RadarChart player={activePlayer} metrics={metrics} />
+              <WagonWheelChart player={activePlayer} metrics={metrics} />
+            </div>
+          </section>
+        )}
+
+        {/* 3. Strengths & Development Areas Row */}
+        {visibility.showStrengths && (
+          <section className="space-y-2 transition-all duration-300">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                <span>Key Strengths & Coaching Development Drills</span>
+              </span>
+              <button
+                onClick={() => handleToggleSection('showStrengths')}
+                className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1 cursor-pointer"
+              >
+                <span>Hide Strengths</span>
+                <EyeOff className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Top 3 Superpowers */}
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 mb-3">
+                  <Trophy className="w-3.5 h-3.5" /> Top 3 Key Strengths
+                </h3>
+                <div className="space-y-2">
+                  {metrics.topStrengths.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xs font-black">
+                          #{idx + 1}
+                        </span>
+                        <span className="text-xs font-bold text-white">{item.title}</span>
+                      </div>
+                      <span className="text-xs font-mono font-black text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+                        {item.value} / 100
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Key Areas to Develop & Drills */}
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-3">
+                  <Lightbulb className="w-3.5 h-3.5" /> Key Areas for Development & Drills
+                </h3>
+                <div className="space-y-2">
+                  {metrics.areasToImprove.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-bold text-slate-200">{item.title}</span>
+                        <span className="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60">
+                          {item.value} / 100
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-tight">
+                        💡 <span className="font-semibold text-slate-300">Drill:</span> {item.tip}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 4. 20 Parameter Sliders & Field Sectors Tuning Row */}
+        {visibility.showParameters && (
+          <section className="space-y-2 transition-all duration-300">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-purple-400" />
+                <span>20-Parameter Granular Tuning & Wagon Wheel Adjustments</span>
+              </span>
+              <button
+                onClick={() => handleToggleSection('showParameters')}
+                className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1 cursor-pointer"
+              >
+                <span>Hide Sliders</span>
+                <EyeOff className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <ParameterSliders
+              player={activePlayer}
+              onChangeParameter={handleChangeParameter}
+              onChangeFieldSector={handleChangeFieldSector}
+              onQuickPreset={handleQuickPreset}
+            />
+          </section>
+        )}
       </main>
 
       {/* Footer */}

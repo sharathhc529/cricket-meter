@@ -64,9 +64,9 @@ Directly calculates the cricketer's probability of bowling extras (wides and fro
 
 ---
 
-### 3. 🏟️ Batting Wagon Wheel & Field Sector Strengths
+### 3. 🏟️ Batting Wagon Wheel & Accurate Field Setting
 Answers: *"Which side of the field is his strength in batting?"*
-- **8-Quadrant Cricket Oval**:
+- **Accurate Cricket Field Layout & Orientation**:
   - `Covers & Extra Cover` (Off)
   - `Point & Backward Point` (Off)
   - `Third Man & Gully` (Off)
@@ -75,11 +75,27 @@ Answers: *"Which side of the field is his strength in batting?"*
   - `Mid-Wicket & Cow Corner` (Leg)
   - `Square Leg & Pull Zone` (Leg)
   - `Fine Leg & Behind Square` (Leg)
-- **Automatic Dominance Verdict**: Calculates exact Off-Side vs. Leg-Side percentage and identifies primary power scoring zones vs targeting holes.
+- **Prominent Batsman Icon**: High-definition, stylized cricket batsman figure at the striker crease featuring helmet with visor grille, team jersey, batting pads, wood-grain willow cricket bat angled in active stance, and glowing pedestal.
+- **Wicketkeeper & Crease Detail**: Crouched wicketkeeper behind 3 wooden stumps with bails and crease lines.
+- **Handedness View Toggle (RHB / LHB)**: Automatically reflects batsman's stance (Right-hand or Left-hand) and flips field quadrants and Off/Leg labels to match international broadcast standards.
+- **11 Realistic Fielders Overlay**: Toggle display of all 11 standard field positions (`WK`, `Slip`, `Point`, `Cover`, `Mid-Off`, `Bowler`, `Mid-On`, `Mid-Wkt`, `Sq-Leg`, `Fine-Leg`, `Cow Cnr`).
+- **Dynamic Shot Trajectory Rays**: Laser-sharp wagon wheel shot lines radiating from the bat's sweet-spot to the boundary when hovering or clicking sectors.
 
 ---
 
-### 4. 🕸️ 6-Dimensional Skill Radar Chart
+### 4. 👁️ Modular Row Show & Hide Mechanism
+Control dashboard layout with granular visibility toggles:
+- **Display Rows Bar**: Show/hide individual rows (*Scorecard & Pressure, Radar & Wagon Wheel Graphs, Strengths & Drills, 20 Parameter Tuning Sliders*).
+- **One-Click Presets**:
+  - `Show All`: Full dashboard view.
+  - `Charts Focus`: Graphs + Key Strengths (ideal for executive presentations).
+  - `Tuning Mode`: Quick access to sliders and scorecard.
+  - `Compact View`: Focused summary cards and graphs.
+- **Persistent Preferences**: Remembers your preferred view layout across browser sessions.
+
+---
+
+### 5. 🕸️ 6-Dimensional Skill Radar Chart
 Custom, responsive SVG Spider / Radar Chart that plots:
 1. Batting Power & Strike
 2. Bowling Potency & Control
@@ -90,7 +106,7 @@ Custom, responsive SVG Spider / Radar Chart that plots:
 
 ---
 
-### 5. ⚔️ Head-to-Head Cricketer Comparison
+### 6. ⚔️ Head-to-Head Cricketer Comparison
 Compare any two cricketers side-by-side:
 - Overlaid dual radar polygons (Primary in Emerald vs Challenger in Amber)
 - Category-by-category scorecard comparison
