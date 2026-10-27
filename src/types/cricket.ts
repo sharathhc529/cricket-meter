@@ -71,6 +71,9 @@ export interface CricketerProfile {
   jerseyNumber?: number;
   avatarUrl?: string;
   bio?: string;
+  group?: string;
+  isArchived?: boolean;
+  tags?: string[];
   parameters: PlayerParameters;
   fieldSectors: FieldSectors;
 }

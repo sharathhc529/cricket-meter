@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { CricketerProfile, FieldSectors, PlayerParameters } from './types/cricket';
-import { DEFAULT_PLAYERS } from './data/defaultPlayers';
+import { DEFAULT_PLAYERS, DEFAULT_GROUPS } from './data/defaultPlayers';
 import { calculateStrengthMetrics, PARAMETER_METADATA } from './utils/strengthCalculator';
 import { Header } from './components/Header';
 import { PlayerSelector } from './components/PlayerSelector';
@@ -12,13 +12,12 @@ import { ComparisonModal } from './components/ComparisonModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { NewPlayerModal } from './components/NewPlayerModal';
 import { SectionVisibilityBar, SectionVisibilityState } from './components/SectionVisibilityBar';
+import { RosterManagerModal } from './components/RosterManagerModal';
 import {
   Trophy,
   Lightbulb,
   Eye,
   EyeOff,
-  ChevronDown,
-  ChevronUp,
   BarChart3,
   LayoutDashboard,
   SlidersHorizontal,
@@ -26,6 +25,7 @@ import {
 
 const STORAGE_KEY = 'cricmeter_players_v1';
 const VISIBILITY_STORAGE_KEY = 'cricmeter_visibility_v1';
+const GROUPS_STORAGE_KEY = 'cricmeter_groups_v1';
 
 export const App: React.FC = () => {
   // Load saved cricketers from localStorage or use defaults
@@ -40,6 +40,20 @@ export const App: React.FC = () => {
       console.error('Error reading localStorage', err);
     }
     return DEFAULT_PLAYERS;
+  });
+
+  // Squads / Groups state
+  const [groups, setGroups] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(GROUPS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (err) {
+      console.error('Error reading groups', err);
+    }
+    return DEFAULT_GROUPS;
   });
 
   const [activePlayerId, setActivePlayerId] = useState<string>(() => {
@@ -66,15 +80,25 @@ export const App: React.FC = () => {
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isExportImportModalOpen, setIsExportImportModalOpen] = useState(false);
   const [isNewPlayerModalOpen, setIsNewPlayerModalOpen] = useState(false);
+  const [isRosterManagerModalOpen, setIsRosterManagerModalOpen] = useState(false);
 
   // Sync players to localStorage
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
     } catch (err) {
-      console.error('Failed to save to localStorage', err);
+      console.error('Failed to save players to localStorage', err);
     }
   }, [players]);
+
+  // Sync groups to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(groups));
+    } catch (err) {
+      console.error('Failed to save groups to localStorage', err);
+    }
+  }, [groups]);
 
   // Sync visibility to localStorage
   useEffect(() => {
@@ -87,7 +111,10 @@ export const App: React.FC = () => {
 
   // Current active player
   const activePlayer = useMemo(() => {
-    return players.find((p) => p.id === activePlayerId) || players[0];
+    const found = players.find((p) => p.id === activePlayerId);
+    if (found) return found;
+    const firstActive = players.find((p) => !p.isArchived);
+    return firstActive || players[0] || DEFAULT_PLAYERS[0];
   }, [players, activePlayerId]);
 
   // Calculated Metrics
@@ -196,6 +223,103 @@ export const App: React.FC = () => {
   const handleAddPlayer = (newPlayer: CricketerProfile) => {
     setPlayers((prev) => [newPlayer, ...prev]);
     setActivePlayerId(newPlayer.id);
+    if (newPlayer.group && !groups.includes(newPlayer.group)) {
+      setGroups((prev) => [...prev, newPlayer.group!]);
+    }
+  };
+
+  // Archive a single player
+  const handleArchivePlayer = (id: string) => {
+    setPlayers((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isArchived: true } : p))
+    );
+    if (activePlayerId === id) {
+      const nextActive = players.find((p) => p.id !== id && !p.isArchived);
+      if (nextActive) setActivePlayerId(nextActive.id);
+    }
+  };
+
+  // Unarchive a single player
+  const handleUnarchivePlayer = (id: string) => {
+    setPlayers((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isArchived: false } : p))
+    );
+  };
+
+  // Delete a single player permanently
+  const handleDeletePlayer = (id: string) => {
+    setPlayers((prev) => {
+      const remaining = prev.filter((p) => p.id !== id);
+      if (remaining.length === 0) {
+        return DEFAULT_PLAYERS;
+      }
+      return remaining;
+    });
+
+    if (activePlayerId === id) {
+      const remaining = players.filter((p) => p.id !== id);
+      const nextActive = remaining.find((p) => !p.isArchived) || remaining[0];
+      if (nextActive) setActivePlayerId(nextActive.id);
+    }
+  };
+
+  // Change a player's squad/group
+  const handleChangePlayerGroup = (id: string, group: string) => {
+    setPlayers((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, group } : p))
+    );
+    if (group && !groups.includes(group)) {
+      setGroups((prev) => [...prev, group]);
+    }
+  };
+
+  // Bulk operations
+  const handleBulkArchive = (ids: string[]) => {
+    const idSet = new Set(ids);
+    setPlayers((prev) =>
+      prev.map((p) => (idSet.has(p.id) ? { ...p, isArchived: true } : p))
+    );
+    if (idSet.has(activePlayerId)) {
+      const nextActive = players.find((p) => !idSet.has(p.id) && !p.isArchived);
+      if (nextActive) setActivePlayerId(nextActive.id);
+    }
+  };
+
+  const handleBulkUnarchive = (ids: string[]) => {
+    const idSet = new Set(ids);
+    setPlayers((prev) =>
+      prev.map((p) => (idSet.has(p.id) ? { ...p, isArchived: false } : p))
+    );
+  };
+
+  const handleBulkDelete = (ids: string[]) => {
+    const idSet = new Set(ids);
+    setPlayers((prev) => {
+      const remaining = prev.filter((p) => !idSet.has(p.id));
+      return remaining.length > 0 ? remaining : DEFAULT_PLAYERS;
+    });
+
+    if (idSet.has(activePlayerId)) {
+      const remaining = players.filter((p) => !idSet.has(p.id));
+      const nextActive = remaining.find((p) => !p.isArchived) || remaining[0];
+      if (nextActive) setActivePlayerId(nextActive.id);
+    }
+  };
+
+  const handleBulkAssignGroup = (ids: string[], group: string) => {
+    const idSet = new Set(ids);
+    setPlayers((prev) =>
+      prev.map((p) => (idSet.has(p.id) ? { ...p, group } : p))
+    );
+    if (group && !groups.includes(group)) {
+      setGroups((prev) => [...prev, group]);
+    }
+  };
+
+  const handleCreateGroup = (groupName: string) => {
+    if (!groups.includes(groupName)) {
+      setGroups((prev) => [...prev, groupName]);
+    }
   };
 
   // Import players from JSON
@@ -210,14 +334,20 @@ export const App: React.FC = () => {
         return [...prev, ...nonDuplicate];
       });
     }
+
+    // Collect new groups from imported profiles
+    const importedGroups = imported.map((p) => p.group).filter(Boolean) as string[];
+    setGroups((prev) => Array.from(new Set([...prev, ...importedGroups])));
   };
 
   // Reset to default roster
   const handleResetDefaults = () => {
     if (window.confirm('Reset cricketer roster back to original 7 default cricket legends?')) {
       setPlayers(DEFAULT_PLAYERS);
+      setGroups(DEFAULT_GROUPS);
       setActivePlayerId(DEFAULT_PLAYERS[0].id);
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(GROUPS_STORAGE_KEY);
     }
   };
 
@@ -239,7 +369,12 @@ export const App: React.FC = () => {
         <PlayerSelector
           players={players}
           activePlayerId={activePlayer.id}
+          groups={groups}
           onSelectPlayer={(id) => setActivePlayerId(id)}
+          onOpenRosterManager={() => setIsRosterManagerModalOpen(true)}
+          onArchivePlayer={handleArchivePlayer}
+          onUnarchivePlayer={handleUnarchivePlayer}
+          onDeletePlayer={handleDeletePlayer}
         />
 
         {/* Show / Hide Row Mechanism Toolbar */}
@@ -401,7 +536,7 @@ export const App: React.FC = () => {
             <span>•</span>
             <span>Pressure Extras Analysis</span>
             <span>•</span>
-            <span>JSON Sync Enabled</span>
+            <span>Squads & Archiving</span>
           </div>
         </div>
       </footer>
@@ -426,6 +561,23 @@ export const App: React.FC = () => {
         onClose={() => setIsNewPlayerModalOpen(false)}
         onAddPlayer={handleAddPlayer}
         existingPlayers={players}
+        groups={groups}
+      />
+
+      <RosterManagerModal
+        isOpen={isRosterManagerModalOpen}
+        onClose={() => setIsRosterManagerModalOpen(false)}
+        players={players}
+        groups={groups}
+        onArchivePlayer={handleArchivePlayer}
+        onUnarchivePlayer={handleUnarchivePlayer}
+        onDeletePlayer={handleDeletePlayer}
+        onChangePlayerGroup={handleChangePlayerGroup}
+        onBulkArchive={handleBulkArchive}
+        onBulkUnarchive={handleBulkUnarchive}
+        onBulkDelete={handleBulkDelete}
+        onBulkAssignGroup={handleBulkAssignGroup}
+        onCreateGroup={handleCreateGroup}
       />
     </div>
   );

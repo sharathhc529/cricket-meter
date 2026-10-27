@@ -5,13 +5,14 @@ import {
   BattingHand,
   BowlingStyle,
 } from '../types/cricket';
-import { X, UserPlus, Sparkles } from 'lucide-react';
+import { X, UserPlus, Users } from 'lucide-react';
 
 interface NewPlayerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddPlayer: (player: CricketerProfile) => void;
   existingPlayers: CricketerProfile[];
+  groups: string[];
 }
 
 export const NewPlayerModal: React.FC<NewPlayerModalProps> = ({
@@ -19,9 +20,13 @@ export const NewPlayerModal: React.FC<NewPlayerModalProps> = ({
   onClose,
   onAddPlayer,
   existingPlayers,
+  groups,
 }) => {
   const [name, setName] = useState('');
   const [country, setCountry] = useState('India');
+  const [group, setGroup] = useState(groups[0] || 'Club Squad');
+  const [customGroup, setCustomGroup] = useState('');
+  const [isCustomGroup, setIsCustomGroup] = useState(false);
   const [role, setRole] = useState<PlayerRole>('pure_batsman');
   const [battingHand, setBattingHand] = useState<BattingHand>('Right-hand bat');
   const [bowlingStyle, setBowlingStyle] = useState<BowlingStyle>('Right-arm fast-medium');
@@ -77,10 +82,16 @@ export const NewPlayerModal: React.FC<NewPlayerModalProps> = ({
       }
     }
 
+    const assignedGroup = isCustomGroup
+      ? (customGroup.trim() || 'Club Squad')
+      : group;
+
     const newPlayer: CricketerProfile = {
       id: `player-${Date.now()}`,
       name: name.trim(),
       country: country.trim() || 'Global',
+      group: assignedGroup,
+      isArchived: false,
       role,
       battingHand,
       bowlingStyle,
@@ -114,7 +125,7 @@ export const NewPlayerModal: React.FC<NewPlayerModalProps> = ({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-3.5">
           <div>
             <label className="text-xs font-bold text-slate-300 block mb-1">Cricketer Name *</label>
             <input
@@ -129,7 +140,7 @@ export const NewPlayerModal: React.FC<NewPlayerModalProps> = ({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1">Country / Team</label>
+              <label className="text-xs font-bold text-slate-300 block mb-1">Country / Region</label>
               <input
                 type="text"
                 value={country}
@@ -147,6 +158,44 @@ export const NewPlayerModal: React.FC<NewPlayerModalProps> = ({
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
+          </div>
+
+          {/* Squad / Group Selection */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold text-purple-300 flex items-center gap-1">
+                <Users className="w-3.5 h-3.5" /> Assign to Squad / Group
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsCustomGroup(!isCustomGroup)}
+                className="text-[10px] text-purple-400 hover:text-purple-300 underline cursor-pointer"
+              >
+                {isCustomGroup ? 'Select from existing' : '+ Enter custom squad'}
+              </button>
+            </div>
+
+            {isCustomGroup ? (
+              <input
+                type="text"
+                value={customGroup}
+                onChange={(e) => setCustomGroup(e.target.value)}
+                placeholder="e.g. Mumbai Indians / Street XI"
+                className="w-full bg-slate-950 border border-purple-500/50 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"
+              />
+            ) : (
+              <select
+                value={group}
+                onChange={(e) => setGroup(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-purple-300 font-bold focus:outline-none focus:border-emerald-500"
+              >
+                {groups.map((g) => (
+                  <option key={g} value={g}>
+                    📁 {g}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div>

@@ -1,5 +1,13 @@
 import { CricketerProfile } from '../types/cricket';
 
+export const DEFAULT_GROUPS = [
+  'India XI',
+  'All-Time Legends',
+  'England XI',
+  'T20 Franchise Stars',
+  'Club Squad',
+];
+
 export const DEFAULT_PLAYERS: CricketerProfile[] = [
   {
     id: 'virat-kohli',
@@ -11,6 +19,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 18,
     avatarUrl: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=150&auto=format&fit=crop&q=80',
     bio: 'Chase Master and modern batting legend renowned for unmatched fitness, electric running between the wickets, and supreme cover drive execution.',
+    group: 'India XI',
+    isArchived: false,
+    tags: ['Top Order', 'Chase Master', 'Fitness Icon'],
     parameters: {
       battingPower: 88,
       boundaryHitting: 91,
@@ -54,6 +65,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 45,
     avatarUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=150&auto=format&fit=crop&q=80',
     bio: 'Hitman of world cricket, legendary for effortless six-hitting ability, peerless short-ball pull shots, and aggressive powerplay dominance.',
+    group: 'India XI',
+    isArchived: false,
+    tags: ['Opener', 'Pull Shot Master', 'Six Hitter'],
     parameters: {
       battingPower: 96,
       boundaryHitting: 98,
@@ -97,6 +111,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 93,
     avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=150&auto=format&fit=crop&q=80',
     bio: 'Premier all-format strike weapon. Possesses pinpoint yorker precision, icy calm death overs nerve, and negligible extras conceded under pressure.',
+    group: 'India XI',
+    isArchived: false,
+    tags: ['Death Yorker King', 'Strike Bowler', 'Zero Extras'],
     parameters: {
       battingPower: 58,
       boundaryHitting: 55,
@@ -140,6 +157,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 55,
     avatarUrl: 'https://images.unsplash.com/photo-1562771379-eafdca7a02f8?w=150&auto=format&fit=crop&q=80',
     bio: 'Colossal match-winner with legendary clutch temperament. Single-handedly turns lost games around with bat, ball, or miraculous boundary catches.',
+    group: 'England XI',
+    isArchived: false,
+    tags: ['All-Rounder', 'Clutch Hero', 'Big Match Winner'],
     parameters: {
       battingPower: 94,
       boundaryHitting: 93,
@@ -183,6 +203,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 7,
     avatarUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=150&auto=format&fit=crop&q=80',
     bio: 'Legendary captain and supreme finisher. Master of last-over arithmetic, lightning fast stumping reflexes, and the fearsome helicopter shot.',
+    group: 'All-Time Legends',
+    isArchived: false,
+    tags: ['Finisher', 'Lightning Stumping', 'Captain Cool'],
     parameters: {
       battingPower: 96,
       boundaryHitting: 95,
@@ -226,6 +249,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 19,
     avatarUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=150&auto=format&fit=crop&q=80',
     bio: 'T20 spin wizard with an elusive lightning googly, unmatched dot ball constriction, and explosive snake-shot boundary hitting in death overs.',
+    group: 'T20 Franchise Stars',
+    isArchived: false,
+    tags: ['Spin Magician', 'Googly Master', 'Death Hitter'],
     parameters: {
       battingPower: 86,
       boundaryHitting: 87,
@@ -269,6 +295,9 @@ export const DEFAULT_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 17,
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     bio: 'Mr. 360° of cricket. Capable of hitting any bowler anywhere in the stadium through unprecedented innovative ramps, scoops, and reverse sweeps.',
+    group: 'All-Time Legends',
+    isArchived: false,
+    tags: ['Mr 360', 'Ramp & Scoop', 'Genius Batter'],
     parameters: {
       battingPower: 97,
       boundaryHitting: 99,

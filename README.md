@@ -114,7 +114,16 @@ Compare any two cricketers side-by-side:
 
 ---
 
-### 6. 💾 JSON Database Sync & Offline Storage
+### 7. 👥 Squad Grouping, Archiving & Deletion
+Complete roster management controls for teams and leagues:
+- **Squad / Group Categorization**: Group cricketers by national team, franchise, club, or custom groups (e.g., `India XI`, `All-Time Legends`, `T20 Franchise Stars`, `Club Squad`). Filter the active view by squad with a single click.
+- **Archiving & Restoring**: Archive retired cricketers or reserve bench players (`📦 Archived`). Archived cricketers are cleanly hidden from the active Playing XI, while their evaluation metrics remain preserved. You can inspect or restore them anytime with `Unarchive / Restore`.
+- **Permanent Deletion**: Safely delete any custom or obsolete player profile with a confirmation safety guard.
+- **Squad Manager Modal**: A full management console featuring search, custom squad creation, and **bulk actions** (bulk squad assignment, bulk archiving, bulk restoring, and bulk deletion).
+
+---
+
+### 8. 💾 JSON Database Sync & Offline Storage
 - **Export Database**: One-click download of the complete roster to formatted `.json`.
 - **Import JSON**: Upload files or paste JSON to merge or restore player rosters.
 - **LocalStorage Sync**: Edits, custom cricketers, and parameter tuning persist automatically.
