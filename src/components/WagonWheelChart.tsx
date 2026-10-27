@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CricketerProfile, FieldSectors, CalculatedStrengthMetrics } from '../types/cricket';
 import { FIELD_SECTOR_LABELS } from '../utils/strengthCalculator';
-import { Compass, Info, Users, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Compass, Info, Users, Eye, EyeOff, Sparkles, Sliders, Plus, Minus, Move } from 'lucide-react';
 
 interface WagonWheelChartProps {
   player: CricketerProfile;
   metrics: CalculatedStrengthMetrics;
+  onChangeFieldSector?: (sector: keyof FieldSectors, value: number) => void;
 }
 
 const DETAILED_SHOT_INFO: Record<
@@ -54,14 +55,27 @@ const DETAILED_SHOT_INFO: Record<
   },
 };
 
-export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metrics }) => {
+export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
+  player,
+  metrics,
+  onChangeFieldSector,
+}) => {
   const [activeSectorKey, setActiveSectorKey] = useState<keyof FieldSectors | null>(null);
   const [showFielders, setShowFielders] = useState<boolean>(true);
   const [showRays, setShowRays] = useState<boolean>(true);
-  
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragSectorKey, setDragSectorKey] = useState<keyof FieldSectors | null>(null);
+
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
   // Stance: Default to player's batting hand, allow toggle
   const isLeftHanded = player.battingHand === 'Left-hand bat';
   const [viewStance, setViewStance] = useState<'RHB' | 'LHB'>(isLeftHanded ? 'LHB' : 'RHB');
+
+  // Keep view stance in sync when player changes
+  useEffect(() => {
+    setViewStance(player.battingHand === 'Left-hand bat' ? 'LHB' : 'RHB');
+  }, [player.id, player.battingHand]);
 
   const size = 420;
   const center = size / 2;
@@ -171,17 +185,92 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
   const strikerY = center + 22;
   const strikerX = center;
 
+  // ==============================================================
+  // 🖱️ DIRECT WAGON WHEEL DRAGGING / CLICK EDITING LOGIC
+  // ==============================================================
+  const calculateValueFromCoords = (clientX: number, clientY: number) => {
+    if (!svgRef.current) return null;
+    const rect = svgRef.current.getBoundingClientRect();
+    const scaleX = size / rect.width;
+    const scaleY = size / rect.height;
+    const svgX = (clientX - rect.left) * scaleX;
+    const svgY = (clientY - rect.top) * scaleY;
+
+    // Distance from center
+    const dx = svgX - center;
+    const dy = svgY - center;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Inner radius is thirtyYardRadius * 0.72 (~67px), boundary rope is groundRadius (180px)
+    const minD = thirtyYardRadius * 0.72;
+    const maxD = groundRadius;
+    const normalized = Math.min(99, Math.max(15, Math.round(((dist - minD) / (maxD - minD)) * 100)));
+    return normalized;
+  };
+
+  const handleSectorMouseDown = (sectorKey: keyof FieldSectors, e: React.MouseEvent) => {
+    if (!onChangeFieldSector) return;
+    setIsDragging(true);
+    setDragSectorKey(sectorKey);
+    setActiveSectorKey(sectorKey);
+    const val = calculateValueFromCoords(e.clientX, e.clientY);
+    if (val !== null) {
+      onChangeFieldSector(sectorKey, val);
+    }
+  };
+
+  const handleSvgMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !dragSectorKey || !onChangeFieldSector) return;
+    const val = calculateValueFromCoords(e.clientX, e.clientY);
+    if (val !== null) {
+      onChangeFieldSector(dragSectorKey, val);
+    }
+  };
+
+  const handleSvgMouseUp = () => {
+    setIsDragging(false);
+    setDragSectorKey(null);
+  };
+
+  // Touch support for mobile/tablets
+  const handleSvgTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !dragSectorKey || !onChangeFieldSector || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const val = calculateValueFromCoords(touch.clientX, touch.clientY);
+    if (val !== null) {
+      onChangeFieldSector(dragSectorKey, val);
+    }
+  };
+
+  // Quick adjust helpers
+  const handleStepValue = (sectorKey: keyof FieldSectors, delta: number) => {
+    if (!onChangeFieldSector) return;
+    const current = player.fieldSectors[sectorKey];
+    const next = Math.min(99, Math.max(15, current + delta));
+    onChangeFieldSector(sectorKey, next);
+  };
+
+  const handleSetPresetValue = (sectorKey: keyof FieldSectors, targetVal: number) => {
+    if (!onChangeFieldSector) return;
+    onChangeFieldSector(sectorKey, targetVal);
+  };
+
   return (
     <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl flex flex-col items-center justify-between relative overflow-hidden">
       {/* Header with Title and Stance / Fielders Toggles */}
       <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-2">
         <div>
-          <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <span>🏟️</span>
-            <span>Batting Wagon Wheel & Field Zones</span>
-          </h3>
+          <div className="flex items-center gap-2">
+            <span className="text-base">🏟️</span>
+            <h3 className="text-sm font-bold text-white">
+              Batting Wagon Wheel & Interactive Field
+            </h3>
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
+              <Move className="w-2.5 h-2.5" /> Direct Editable
+            </span>
+          </div>
           <p className="text-[11px] text-slate-400">
-            Real cricket field orientation, prominent batsman stance & 8-sector strength
+            Click or drag sectors directly on the ground to edit strengths in real time
           </p>
         </div>
 
@@ -244,8 +333,16 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
       {/* Cricket Ground SVG */}
       <div className="relative w-full flex items-center justify-center py-1">
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${size} ${size}`}
-          className="w-full max-w-[400px] h-auto drop-shadow-2xl select-none"
+          onMouseMove={handleSvgMouseMove}
+          onMouseUp={handleSvgMouseUp}
+          onMouseLeave={handleSvgMouseUp}
+          onTouchMove={handleSvgTouchMove}
+          onTouchEnd={handleSvgMouseUp}
+          className={`w-full max-w-[400px] h-auto drop-shadow-2xl select-none ${
+            isDragging ? 'cursor-grabbing' : 'cursor-default'
+          }`}
         >
           <defs>
             {/* Stadium Grass Gradient */}
@@ -268,6 +365,15 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
               <stop offset="60%" stopColor="#06b6d4" stopOpacity="0.3" />
               <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
             </radialGradient>
+
+            {/* Handle Glow Filter */}
+            <filter id="handleGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" />
+              <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
 
           {/* Outer Boundary Oval */}
@@ -305,10 +411,10 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
             strokeDasharray="3,3"
           />
 
-          {/* Sector Arcs (Heatmap) */}
+          {/* Sector Arcs (Heatmap & Interactive Drag Surfaces) */}
           {sectorConfigs.map((sec) => {
             const val = player.fieldSectors[sec.key];
-            const isHovered = activeSectorKey === sec.key;
+            const isHovered = activeSectorKey === sec.key || dragSectorKey === sec.key;
             // Radius expands outwards proportional to player strength
             const sectorRadius = thirtyYardRadius + (val / 100) * (groundRadius - thirtyYardRadius);
             const pathData = describeSectorArc(
@@ -322,21 +428,28 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
 
             const midAngle = (sec.startAngle + sec.endAngle) / 2;
             const labelPos = polarToCartesian(center, center, groundRadius - 16, midAngle);
+            const handlePos = polarToCartesian(center, center, sectorRadius, midAngle);
 
             return (
               <g
                 key={sec.key}
-                className="cursor-pointer transition-all duration-200"
-                onMouseEnter={() => setActiveSectorKey(sec.key)}
-                onMouseLeave={() => setActiveSectorKey(null)}
+                className="cursor-pointer transition-all duration-150"
+                onMouseEnter={() => {
+                  if (!isDragging) setActiveSectorKey(sec.key);
+                }}
+                onMouseLeave={() => {
+                  if (!isDragging) setActiveSectorKey(null);
+                }}
+                onMouseDown={(e) => handleSectorMouseDown(sec.key, e)}
               >
+                {/* Visual Arc Slice */}
                 <path
                   d={pathData}
                   fill={getStrengthColor(val, isHovered)}
-                  fillOpacity={isHovered ? 0.9 : 0.42}
-                  stroke={isHovered ? '#ffffff' : 'rgba(255,255,255,0.2)'}
-                  strokeWidth={isHovered ? 2.2 : 0.8}
-                  className="transition-all duration-200"
+                  fillOpacity={isHovered ? 0.92 : 0.45}
+                  stroke={isHovered ? '#ffffff' : 'rgba(255,255,255,0.22)'}
+                  strokeWidth={isHovered ? 2.5 : 0.8}
+                  className="transition-all duration-150"
                 />
 
                 {/* Score Pill in Sector */}
@@ -353,6 +466,26 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
                 >
                   {val}%
                 </text>
+
+                {/* Interactive Drag Handle (shown on hovered/active sector) */}
+                {isHovered && (
+                  <g className="pointer-events-none" filter="url(#handleGlow)">
+                    <circle
+                      cx={handlePos.x}
+                      cy={handlePos.y}
+                      r="5.5"
+                      fill="#ffffff"
+                      stroke="#0f172a"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx={handlePos.x}
+                      cy={handlePos.y}
+                      r="2"
+                      fill="#10b981"
+                    />
+                  </g>
+                )}
               </g>
             );
           })}
@@ -695,24 +828,86 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
           </text>
         </svg>
 
-        {/* Hover / Active Sector Details Card */}
+        {/* Hover / Active Sector Details & Direct Tuning HUD Card */}
         {activeSector && (
-          <div className="absolute bottom-2 left-3 right-3 bg-slate-950/95 border border-emerald-500/60 rounded-xl p-3 shadow-2xl backdrop-blur-md transition-all z-10">
-            <div className="flex items-center justify-between text-xs font-bold mb-1">
+          <div className="absolute bottom-2 left-3 right-3 bg-slate-950/95 border border-emerald-500/60 rounded-xl p-3 shadow-2xl backdrop-blur-md transition-all z-10 space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold">
               <span className="text-white flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                 {activeSector.name} ({activeSector.side.toUpperCase()})
               </span>
-              <span className="font-mono text-emerald-400 text-sm font-black">
-                {activeSector.value} / 100
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">
+                  Drag on field or tune:
+                </span>
+                <span className="font-mono text-emerald-400 text-sm font-black bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">
+                  {activeSector.value}%
+                </span>
+              </div>
             </div>
-            <div className="text-[11px] text-slate-300 leading-tight mb-1">
+
+            {/* Direct Quick Slider & Stepper Controls */}
+            {onChangeFieldSector && (
+              <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+                {/* Minus 5% */}
+                <button
+                  type="button"
+                  onClick={() => handleStepValue(activeSector.key, -5)}
+                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
+                  title="Decrease 5%"
+                >
+                  <Minus className="w-3 h-3" />
+                </button>
+
+                {/* Direct Slider */}
+                <input
+                  type="range"
+                  min="15"
+                  max="99"
+                  value={activeSector.value}
+                  onChange={(e) => onChangeFieldSector(activeSector.key, parseInt(e.target.value))}
+                  className="flex-1 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+                />
+
+                {/* Plus 5% */}
+                <button
+                  type="button"
+                  onClick={() => handleStepValue(activeSector.key, 5)}
+                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
+                  title="Increase 5%"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+
+                {/* Quick Presets */}
+                <div className="flex items-center gap-1 pl-1">
+                  <button
+                    type="button"
+                    onClick={() => handleSetPresetValue(activeSector.key, 95)}
+                    className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800 hover:bg-emerald-900 transition cursor-pointer"
+                  >
+                    95%
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSetPresetValue(activeSector.key, 75)}
+                    className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-cyan-950 text-cyan-400 border border-cyan-800 hover:bg-cyan-900 transition cursor-pointer"
+                  >
+                    75%
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSetPresetValue(activeSector.key, 50)}
+                    className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950 text-amber-400 border border-amber-800 hover:bg-amber-900 transition cursor-pointer"
+                  >
+                    50%
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="text-[11px] text-slate-300 leading-tight">
               <span className="text-emerald-400 font-semibold">Key Shots:</span> {activeSector.primaryShots}
-            </div>
-            <div className="text-[10px] text-slate-400 flex items-center justify-between">
-              <span>Fielders: {activeSector.fieldingPositions}</span>
-              <span className="italic text-slate-500">{activeSector.description}</span>
             </div>
           </div>
         )}
@@ -722,7 +917,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
       <div className="w-full pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
         <span className="flex items-center gap-1">
           <Info className="w-3.5 h-3.5 text-slate-500" />
-          <span>Interactive: Click/Hover slices to trace shots</span>
+          <span>🖱️ Click & drag any sector on the field to dynamically resize</span>
         </span>
         <span className="font-bold text-white">
           Dominance: <span className="text-emerald-400">{metrics.fieldStrengthSide}</span>

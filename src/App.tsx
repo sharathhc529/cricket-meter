@@ -422,7 +422,11 @@ export const App: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <RadarChart player={activePlayer} metrics={metrics} />
-              <WagonWheelChart player={activePlayer} metrics={metrics} />
+              <WagonWheelChart
+                player={activePlayer}
+                metrics={metrics}
+                onChangeFieldSector={handleChangeFieldSector}
+              />
             </div>
           </section>
         )}

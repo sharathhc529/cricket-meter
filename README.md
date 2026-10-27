@@ -78,8 +78,9 @@ Answers: *"Which side of the field is his strength in batting?"*
 - **Prominent Batsman Icon**: High-definition, stylized cricket batsman figure at the striker crease featuring helmet with visor grille, team jersey, batting pads, wood-grain willow cricket bat angled in active stance, and glowing pedestal.
 - **Wicketkeeper & Crease Detail**: Crouched wicketkeeper behind 3 wooden stumps with bails and crease lines.
 - **Handedness View Toggle (RHB / LHB)**: Automatically reflects batsman's stance (Right-hand or Left-hand) and flips field quadrants and Off/Leg labels to match international broadcast standards.
-- **11 Realistic Fielders Overlay**: Toggle display of all 11 standard field positions (`WK`, `Slip`, `Point`, `Cover`, `Mid-Off`, `Bowler`, `Mid-On`, `Mid-Wkt`, `Sq-Leg`, `Fine-Leg`, `Cow Cnr`).
-- **Dynamic Shot Trajectory Rays**: Laser-sharp wagon wheel shot lines radiating from the bat's sweet-spot to the boundary when hovering or clicking sectors.
+- **Direct Interactive Wagon Wheel Editing**: Click or drag directly on any sector on the field to dynamically resize its scoring strength in real time.
+- **Two-Way Real-Time Sync**: Adjusting any slice directly on the graphic immediately syncs the 8 Wagon Wheel parameter sliders, updates the Off-Side vs Leg-Side dominance ratio, and recalculates the player's overall rating and archetype instantly.
+- **In-Wheel Quick Tuning HUD**: Includes stepper buttons (`-5%`, `+5%`), direct slider, and one-tap presets (`95%`, `75%`, `50%`) right on the active sector card.
 
 ---
 
