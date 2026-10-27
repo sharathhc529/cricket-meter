@@ -160,14 +160,14 @@ export const PARAMETER_METADATA: ParameterMetadata[] = [
 ];
 
 export const FIELD_SECTOR_LABELS: Record<keyof FieldSectors, { name: string; side: 'off' | 'leg'; angle: number }> = {
-  longOff: { name: 'Long-Off / Mid-Off', side: 'off', angle: 340 },
-  cover: { name: 'Covers & Extra Cover', side: 'off', angle: 295 },
-  point: { name: 'Point & Backward Point', side: 'off', angle: 250 },
-  thirdMan: { name: 'Third Man / Gully', side: 'off', angle: 205 },
-  fineLeg: { name: 'Fine Leg & Behind Square', side: 'leg', angle: 155 },
-  squareLeg: { name: 'Square Leg & Pull Zone', side: 'leg', angle: 110 },
-  midWicket: { name: 'Mid-Wicket & Cow Corner', side: 'leg', angle: 65 },
-  longOn: { name: 'Long-On / Mid-On', side: 'leg', angle: 20 },
+  longOff: { name: 'Long-Off / Mid-Off', side: 'off', angle: 25 },
+  cover: { name: 'Covers & Extra Cover', side: 'off', angle: 65 },
+  point: { name: 'Point & Backward Point', side: 'off', angle: 110 },
+  thirdMan: { name: 'Third Man / Gully', side: 'off', angle: 155 },
+  fineLeg: { name: 'Fine Leg & Behind Square', side: 'leg', angle: 205 },
+  squareLeg: { name: 'Square Leg & Pull Zone', side: 'leg', angle: 250 },
+  midWicket: { name: 'Mid-Wicket & Cow Corner', side: 'leg', angle: 295 },
+  longOn: { name: 'Long-On / Mid-On', side: 'leg', angle: 335 },
 };
 
 /**

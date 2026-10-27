@@ -169,19 +169,19 @@ export const OverviewCards: React.FC<OverviewCardsProps> = ({ player, metrics })
           </div>
 
           <div className="flex items-center justify-between mb-2 text-xs font-bold">
-            <span className="text-cyan-400">Off-Side {metrics.offSidePercentage}%</span>
             <span className="text-emerald-400">Leg-Side {metrics.legSidePercentage}%</span>
+            <span className="text-cyan-400">Off-Side {metrics.offSidePercentage}%</span>
           </div>
 
-          {/* Dual Color Segment Bar */}
+          {/* Dual Color Segment Bar: Matches Ground (Left = Leg-Side, Right = Off-Side) */}
           <div className="w-full bg-slate-950 rounded-full h-3 mb-2 flex overflow-hidden border border-slate-800 p-0.5">
             <div
-              className="bg-cyan-500 h-full rounded-l-full transition-all duration-500"
-              style={{ width: `${metrics.offSidePercentage}%` }}
+              className="bg-emerald-500 h-full rounded-l-full transition-all duration-500"
+              style={{ width: `${metrics.legSidePercentage}%` }}
             />
             <div
-              className="bg-emerald-500 h-full rounded-r-full transition-all duration-500"
-              style={{ width: `${metrics.legSidePercentage}%` }}
+              className="bg-cyan-500 h-full rounded-r-full transition-all duration-500"
+              style={{ width: `${metrics.offSidePercentage}%` }}
             />
           </div>
 

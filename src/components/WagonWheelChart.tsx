@@ -70,24 +70,27 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
 
   // Real cricket orientation:
   // Striker stands at bottom of pitch (center, center + 22). Bowler bowls from top (center, center - 22).
-  // For RHB:
-  // Off-side is to the LEFT (West: -180° to 0°).
-  // Leg-side is to the RIGHT (East: 0° to 180°).
+  // For RHB (facing Up/North towards bowler):
+  // - OFF-SIDE is to the RIGHT (East: 0° to 180° clockwise)
+  // - LEG-SIDE is to the LEFT (West: -180° to 0° counter-clockwise)
   // For LHB:
-  // Off-side is to the RIGHT (East).
-  // Leg-side is to the LEFT (West).
+  // - OFF-SIDE is to the LEFT (West)
+  // - LEG-SIDE is to the RIGHT (East)
   const isLHB = viewStance === 'LHB';
 
   // 8 sector configs (Angles in degrees where 0 = Top / Straight):
   const rawSectorConfigs: { key: keyof FieldSectors; startAngle: number; endAngle: number }[] = [
-    { key: 'longOff', startAngle: -45, endAngle: 0 },
-    { key: 'cover', startAngle: -90, endAngle: -45 },
-    { key: 'point', startAngle: -135, endAngle: -90 },
-    { key: 'thirdMan', startAngle: -180, endAngle: -135 },
-    { key: 'fineLeg', startAngle: 135, endAngle: 180 },
-    { key: 'squareLeg', startAngle: 90, endAngle: 135 },
-    { key: 'midWicket', startAngle: 45, endAngle: 90 },
-    { key: 'longOn', startAngle: 0, endAngle: 45 },
+    // 🏏 OFF-SIDE (Right half of the field: 0° to 180° clockwise for RHB)
+    { key: 'longOff', startAngle: 0, endAngle: 45 },
+    { key: 'cover', startAngle: 45, endAngle: 90 },
+    { key: 'point', startAngle: 90, endAngle: 135 },
+    { key: 'thirdMan', startAngle: 135, endAngle: 180 },
+
+    // 🏏 LEG-SIDE / ON-SIDE (Left half of the field: -180° to 0° counter-clockwise for RHB)
+    { key: 'fineLeg', startAngle: -180, endAngle: -135 },
+    { key: 'squareLeg', startAngle: -135, endAngle: -90 },
+    { key: 'midWicket', startAngle: -90, endAngle: -45 },
+    { key: 'longOn', startAngle: -45, endAngle: 0 },
   ];
 
   // If LHB, flip off-side and leg-side angles horizontally
@@ -139,18 +142,20 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
   };
 
   // Typical standard 11 fielding positions for a balanced field
+  // RHB: Off-side on the Right (> 0°), Leg-side on the Left (< 0°)
+  // LHB: Flipped horizontally
   const fieldingPositions: { name: string; short: string; angle: number; r: number; ring: 'inner' | 'deep' }[] = [
-    { name: 'Wicketkeeper', short: 'WK', angle: isLHB ? -170 : 170, r: 24, ring: 'inner' },
-    { name: '1st Slip', short: 'Slip', angle: isLHB ? 160 : -160, r: 35, ring: 'inner' },
-    { name: 'Point', short: 'Pt', angle: isLHB ? 95 : -95, r: thirtyYardRadius * 0.85, ring: 'inner' },
-    { name: 'Cover', short: 'Cov', angle: isLHB ? 60 : -60, r: thirtyYardRadius * 0.82, ring: 'inner' },
-    { name: 'Mid-Off', short: 'M-Off', angle: isLHB ? 25 : -25, r: thirtyYardRadius * 0.8, ring: 'inner' },
+    { name: 'Wicketkeeper', short: 'WK', angle: isLHB ? -175 : 175, r: 24, ring: 'inner' },
+    { name: '1st Slip', short: 'Slip', angle: isLHB ? -158 : 158, r: 35, ring: 'inner' },
+    { name: 'Point', short: 'Pt', angle: isLHB ? -95 : 95, r: thirtyYardRadius * 0.85, ring: 'inner' },
+    { name: 'Cover', short: 'Cov', angle: isLHB ? -60 : 60, r: thirtyYardRadius * 0.82, ring: 'inner' },
+    { name: 'Mid-Off', short: 'M-Off', angle: isLHB ? -25 : 25, r: thirtyYardRadius * 0.8, ring: 'inner' },
     { name: 'Bowler', short: 'Bowl', angle: 0, r: 28, ring: 'inner' },
-    { name: 'Mid-On', short: 'M-On', angle: isLHB ? -25 : 25, r: thirtyYardRadius * 0.8, ring: 'inner' },
-    { name: 'Mid-Wicket', short: 'M-Wkt', angle: isLHB ? -65 : 65, r: thirtyYardRadius * 0.85, ring: 'inner' },
-    { name: 'Square Leg', short: 'Sq-L', angle: isLHB ? -100 : 100, r: thirtyYardRadius * 0.8, ring: 'inner' },
-    { name: 'Deep Fine Leg', short: 'D.Fine', angle: isLHB ? -145 : 145, r: groundRadius * 0.88, ring: 'deep' },
-    { name: 'Deep Mid-Wicket', short: 'Cow Cnr', angle: isLHB ? -70 : 70, r: groundRadius * 0.9, ring: 'deep' },
+    { name: 'Mid-On', short: 'M-On', angle: isLHB ? 25 : -25, r: thirtyYardRadius * 0.8, ring: 'inner' },
+    { name: 'Mid-Wicket', short: 'M-Wkt', angle: isLHB ? 65 : -65, r: thirtyYardRadius * 0.85, ring: 'inner' },
+    { name: 'Square Leg', short: 'Sq-L', angle: isLHB ? 100 : -100, r: thirtyYardRadius * 0.8, ring: 'inner' },
+    { name: 'Deep Fine Leg', short: 'D.Fine', angle: isLHB ? 145 : -145, r: groundRadius * 0.88, ring: 'deep' },
+    { name: 'Deep Mid-Wicket', short: 'Cow Cnr', angle: isLHB ? 70 : -70, r: groundRadius * 0.9, ring: 'deep' },
   ];
 
   const activeSector = activeSectorKey
@@ -262,12 +267,6 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
               <stop offset="0%" stopColor="#10b981" stopOpacity="0.6" />
               <stop offset="60%" stopColor="#06b6d4" stopOpacity="0.3" />
               <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
-            </radialGradient>
-
-            {/* Fielder Badge Gradient */}
-            <radialGradient id="fielderGrad" cx="35%" cy="35%" r="65%">
-              <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="100%" stopColor="#0284c7" />
             </radialGradient>
           </defs>
 
@@ -454,13 +453,12 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
             />
 
             {/* Batsman Stance based on RHB vs LHB */}
-            {/* For RHB: Batter stands with left shoulder forward (towards bowler/North), facing East */}
-            {/* For LHB: Batter stands with right shoulder forward (towards bowler/North), facing West */}
+            {/* For RHB: Batter's bat is on the OFF-SIDE (Right) */}
+            {/* For LHB: Mirrored with scale(-1, 1) so bat is on the Left */}
             <g transform={isLHB ? `scale(-1, 1) translate(${-2 * strikerX}, 0)` : undefined}>
-              {/* Batting Leg Guards / Pads */}
               {/* Back Leg Pad */}
               <rect
-                x={strikerX - 4}
+                x={strikerX + 1}
                 y={strikerY + 1}
                 width="3.2"
                 height="7"
@@ -481,79 +479,72 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
                 strokeWidth="0.8"
               />
 
-              {/* Batsman Torso / Jersey (India / Team Emerald Blue) */}
+              {/* Batsman Torso / Jersey */}
               <path
-                d={`M ${strikerX - 3.5} ${strikerY - 1} C ${strikerX - 4} ${strikerY - 6}, ${strikerX + 3} ${strikerY - 6}, ${strikerX + 2.5} ${strikerY - 1} Z`}
+                d={`M ${strikerX - 2.5} ${strikerY - 1} C ${strikerX - 3} ${strikerY - 6}, ${strikerX + 4} ${strikerY - 6}, ${strikerX + 3.5} ${strikerY - 1} Z`}
                 fill="#0284c7"
                 stroke="#082f49"
                 strokeWidth="0.8"
               />
 
-              {/* Left & Right Batting Arms gripping the Bat */}
-              {/* Left Top Hand Arm */}
+              {/* Arms gripping bat towards the Right (Off-Side) */}
               <path
-                d={`M ${strikerX - 1} ${strikerY - 5} L ${strikerX - 5} ${strikerY - 3}`}
+                d={`M ${strikerX + 1} ${strikerY - 5} L ${strikerX + 5} ${strikerY - 3}`}
                 stroke="#0284c7"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
-              {/* Right Bottom Hand Arm */}
               <path
-                d={`M ${strikerX + 1} ${strikerY - 5} L ${strikerX - 4} ${strikerY - 2}`}
+                d={`M ${strikerX - 1} ${strikerY - 5} L ${strikerX + 4} ${strikerY - 2}`}
                 stroke="#0284c7"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
 
               {/* Batting Gloves */}
-              <circle cx={strikerX - 5} cy={strikerY - 3} r="1.5" fill="#ffffff" stroke="#0f172a" strokeWidth="0.6" />
-              <circle cx={strikerX - 4} cy={strikerY - 2} r="1.5" fill="#ffffff" stroke="#0f172a" strokeWidth="0.6" />
+              <circle cx={strikerX + 5} cy={strikerY - 3} r="1.5" fill="#ffffff" stroke="#0f172a" strokeWidth="0.6" />
+              <circle cx={strikerX + 4} cy={strikerY - 2} r="1.5" fill="#ffffff" stroke="#0f172a" strokeWidth="0.6" />
 
-              {/* CRICKET BAT (Angled in dynamic stance) */}
-              {/* Bat Rubber Handle */}
+              {/* CRICKET BAT (Raised on the Right / Off-Side in active stance) */}
               <line
-                x1={strikerX - 6}
+                x1={strikerX + 6}
                 y1={strikerY - 3.5}
-                x2={strikerX - 9}
+                x2={strikerX + 9}
                 y2={strikerY - 5}
                 stroke="#f97316"
                 strokeWidth="1.4"
                 strokeLinecap="round"
               />
-              {/* Bat Blade (English Willow Wood Grain) */}
               <rect
-                x={strikerX - 16}
+                x={strikerX + 8}
                 y={strikerY - 9}
                 width="8"
                 height="3.6"
                 rx="1"
-                transform={`rotate(-28 ${strikerX - 12} ${strikerY - 7})`}
+                transform={`rotate(28 ${strikerX + 12} ${strikerY - 7})`}
                 fill="#fbbf24"
                 stroke="#78350f"
                 strokeWidth="1"
               />
-              {/* Bat Sweet-Spot Highlight Line */}
               <line
-                x1={strikerX - 14}
-                y1={strikerY - 6.5}
-                x2={strikerX - 9}
-                y2={strikerY - 4.5}
+                x1={strikerX + 9}
+                y1={strikerY - 4.5}
+                x2={strikerX + 14}
+                y2={strikerY - 6.5}
                 stroke="#ef4444"
                 strokeWidth="1.2"
               />
 
-              {/* Batsman Head & Helmet */}
-              {/* Visor & Grille */}
-              <circle cx={strikerX - 0.5} cy={strikerY - 7.5} r="3.8" fill="#0369a1" stroke="#0c4a6e" strokeWidth="1" />
+              {/* Helmet & Visor looking up towards bowler */}
+              <circle cx={strikerX + 0.5} cy={strikerY - 7.5} r="3.8" fill="#0369a1" stroke="#0c4a6e" strokeWidth="1" />
               <path
-                d={`M ${strikerX - 3.5} ${strikerY - 7} L ${strikerX} ${strikerY - 8.5}`}
+                d={`M ${strikerX} ${strikerY - 8.5} L ${strikerX + 3.5} ${strikerY - 7}`}
                 stroke="#cbd5e1"
                 strokeWidth="1"
                 strokeLinecap="round"
               />
-              {/* Face Guard Grill */}
               <path
-                d={`M ${strikerX - 2.5} ${strikerY - 6.5} L ${strikerX + 1} ${strikerY - 6.5}`}
+                d={`M ${strikerX - 1} ${strikerY - 6.5} L ${strikerX + 2.5} ${strikerY - 6.5}`}
                 stroke="#94a3b8"
                 strokeWidth="0.8"
               />
@@ -596,7 +587,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
 
                 const midAngle = (sec.startAngle + sec.endAngle) / 2;
                 const boundaryPt = polarToCartesian(center, center, groundRadius - 8, midAngle);
-                const sweetSpotX = strikerX + (isLHB ? 8 : -8);
+                const sweetSpotX = strikerX + (isLHB ? -8 : 8);
                 const sweetSpotY = strikerY - 4;
 
                 const rayColor = getStrengthColor(val, true);
@@ -665,24 +656,26 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({ player, metric
           )}
 
           {/* Accurate Off-Side and Leg-Side Watermark Text */}
+          {/* For RHB: Right side is OFF-SIDE, Left side is LEG-SIDE */}
+          {/* For LHB: Left side is OFF-SIDE, Right side is LEG-SIDE */}
           <text
-            x={isLHB ? center + groundRadius - 20 : center - groundRadius + 20}
+            x={isLHB ? center - groundRadius + 20 : center + groundRadius - 20}
             y={center - 4}
             fill="#38bdf8"
             fontSize="11"
             fontWeight="900"
-            textAnchor={isLHB ? 'end' : 'start'}
+            textAnchor={isLHB ? 'start' : 'end'}
             letterSpacing="1"
           >
             OFF-SIDE
           </text>
           <text
-            x={isLHB ? center - groundRadius + 20 : center + groundRadius - 20}
+            x={isLHB ? center + groundRadius - 20 : center - groundRadius + 20}
             y={center - 4}
             fill="#34d399"
             fontSize="11"
             fontWeight="900"
-            textAnchor={isLHB ? 'start' : 'end'}
+            textAnchor={isLHB ? 'end' : 'start'}
             letterSpacing="1"
           >
             LEG-SIDE
