@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CricketerProfile, FieldSectors, CalculatedStrengthMetrics } from '../types/cricket';
 import { FIELD_SECTOR_LABELS } from '../utils/strengthCalculator';
-import { Compass, Info, Users, Eye, EyeOff, Sparkles, Sliders, Plus, Minus, Move } from 'lucide-react';
+import { Compass, Info, Users, Eye, EyeOff, Sparkles, Sliders, Plus, Minus, Move, Check } from 'lucide-react';
 
 interface WagonWheelChartProps {
   player: CricketerProfile;
@@ -60,7 +60,9 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
   metrics,
   onChangeFieldSector,
 }) => {
-  const [activeSectorKey, setActiveSectorKey] = useState<keyof FieldSectors | null>(null);
+  // Default selected sector to the player's strongest sector so controls are always ready
+  const [selectedSectorKey, setSelectedSectorKey] = useState<keyof FieldSectors>(metrics.strongestSector.key);
+  const [hoveredSectorKey, setHoveredSectorKey] = useState<keyof FieldSectors | null>(null);
   const [showFielders, setShowFielders] = useState<boolean>(true);
   const [showRays, setShowRays] = useState<boolean>(true);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -72,14 +74,15 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
   const isLeftHanded = player.battingHand === 'Left-hand bat';
   const [viewStance, setViewStance] = useState<'RHB' | 'LHB'>(isLeftHanded ? 'LHB' : 'RHB');
 
-  // Keep view stance in sync when player changes
+  // Keep view stance and selected sector in sync when player changes
   useEffect(() => {
     setViewStance(player.battingHand === 'Left-hand bat' ? 'LHB' : 'RHB');
+    setSelectedSectorKey(metrics.strongestSector.key);
   }, [player.id, player.battingHand]);
 
-  const size = 420;
+  const size = 390;
   const center = size / 2;
-  const groundRadius = center - 30;
+  const groundRadius = center - 26;
   const thirtyYardRadius = groundRadius * 0.52;
 
   // Real cricket orientation:
@@ -148,11 +151,11 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
     `;
   };
 
-  const getStrengthColor = (val: number, isHovered: boolean) => {
-    if (val >= 90) return isHovered ? '#10b981' : '#059669'; // Emerald
-    if (val >= 78) return isHovered ? '#06b6d4' : '#0891b2'; // Cyan
-    if (val >= 65) return isHovered ? '#f59e0b' : '#d97706'; // Amber
-    return isHovered ? '#f43f5e' : '#e11d48'; // Rose
+  const getStrengthColor = (val: number, isHighlighted: boolean) => {
+    if (val >= 90) return isHighlighted ? '#10b981' : '#059669'; // Emerald
+    if (val >= 78) return isHighlighted ? '#06b6d4' : '#0891b2'; // Cyan
+    if (val >= 65) return isHighlighted ? '#f59e0b' : '#d97706'; // Amber
+    return isHighlighted ? '#f43f5e' : '#e11d48'; // Rose
   };
 
   // Typical standard 11 fielding positions for a balanced field
@@ -172,14 +175,14 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
     { name: 'Deep Mid-Wicket', short: 'Cow Cnr', angle: isLHB ? 70 : -70, r: groundRadius * 0.9, ring: 'deep' },
   ];
 
-  const activeSector = activeSectorKey
-    ? {
-        key: activeSectorKey,
-        ...FIELD_SECTOR_LABELS[activeSectorKey],
-        value: player.fieldSectors[activeSectorKey],
-        ...DETAILED_SHOT_INFO[activeSectorKey],
-      }
-    : null;
+  // Active sector to show in tuning panel: hovered sector if any, otherwise the selected sector
+  const activeSectorKey = hoveredSectorKey || selectedSectorKey;
+  const activeSector = {
+    key: activeSectorKey,
+    ...FIELD_SECTOR_LABELS[activeSectorKey],
+    value: player.fieldSectors[activeSectorKey],
+    ...DETAILED_SHOT_INFO[activeSectorKey],
+  };
 
   // Striker batting crease coordinates
   const strikerY = center + 22;
@@ -212,7 +215,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
     if (!onChangeFieldSector) return;
     setIsDragging(true);
     setDragSectorKey(sectorKey);
-    setActiveSectorKey(sectorKey);
+    setSelectedSectorKey(sectorKey);
     const val = calculateValueFromCoords(e.clientX, e.clientY);
     if (val !== null) {
       onChangeFieldSector(sectorKey, val);
@@ -256,21 +259,21 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
   };
 
   return (
-    <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl flex flex-col items-center justify-between relative overflow-hidden">
+    <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between relative overflow-hidden space-y-4">
       {/* Header with Title and Stance / Fielders Toggles */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-2">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-800/60">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-base">🏟️</span>
             <h3 className="text-sm font-bold text-white">
-              Batting Wagon Wheel & Interactive Field
+              Batting Wagon Wheel & Interactive Ground
             </h3>
             <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
               <Move className="w-2.5 h-2.5" /> Direct Editable
             </span>
           </div>
           <p className="text-[11px] text-slate-400">
-            Click or drag sectors directly on the ground to edit strengths in real time
+            Real cricket field orientation with prominent batsman stance & direct drag tuning
           </p>
         </div>
 
@@ -330,8 +333,8 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
         </div>
       </div>
 
-      {/* Cricket Ground SVG */}
-      <div className="relative w-full flex items-center justify-center py-1">
+      {/* Cricket Ground SVG (Completely Unobscured, Zero Overlays) */}
+      <div className="relative w-full flex items-center justify-center">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${size} ${size}`}
@@ -340,7 +343,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
           onMouseLeave={handleSvgMouseUp}
           onTouchMove={handleSvgTouchMove}
           onTouchEnd={handleSvgMouseUp}
-          className={`w-full max-w-[400px] h-auto drop-shadow-2xl select-none ${
+          className={`w-full max-w-[370px] h-auto drop-shadow-2xl select-none ${
             isDragging ? 'cursor-grabbing' : 'cursor-default'
           }`}
         >
@@ -414,7 +417,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
           {/* Sector Arcs (Heatmap & Interactive Drag Surfaces) */}
           {sectorConfigs.map((sec) => {
             const val = player.fieldSectors[sec.key];
-            const isHovered = activeSectorKey === sec.key || dragSectorKey === sec.key;
+            const isHighlighted = activeSectorKey === sec.key;
             // Radius expands outwards proportional to player strength
             const sectorRadius = thirtyYardRadius + (val / 100) * (groundRadius - thirtyYardRadius);
             const pathData = describeSectorArc(
@@ -435,20 +438,21 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
                 key={sec.key}
                 className="cursor-pointer transition-all duration-150"
                 onMouseEnter={() => {
-                  if (!isDragging) setActiveSectorKey(sec.key);
+                  if (!isDragging) setHoveredSectorKey(sec.key);
                 }}
                 onMouseLeave={() => {
-                  if (!isDragging) setActiveSectorKey(null);
+                  if (!isDragging) setHoveredSectorKey(null);
                 }}
+                onClick={() => setSelectedSectorKey(sec.key)}
                 onMouseDown={(e) => handleSectorMouseDown(sec.key, e)}
               >
                 {/* Visual Arc Slice */}
                 <path
                   d={pathData}
-                  fill={getStrengthColor(val, isHovered)}
-                  fillOpacity={isHovered ? 0.92 : 0.45}
-                  stroke={isHovered ? '#ffffff' : 'rgba(255,255,255,0.22)'}
-                  strokeWidth={isHovered ? 2.5 : 0.8}
+                  fill={getStrengthColor(val, isHighlighted)}
+                  fillOpacity={isHighlighted ? 0.92 : 0.45}
+                  stroke={isHighlighted ? '#ffffff' : 'rgba(255,255,255,0.22)'}
+                  strokeWidth={isHighlighted ? 2.5 : 0.8}
                   className="transition-all duration-150"
                 />
 
@@ -458,7 +462,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
                   y={labelPos.y}
                   textAnchor="middle"
                   dominantBaseline="central"
-                  fill={isHovered ? '#ffffff' : '#f1f5f9'}
+                  fill={isHighlighted ? '#ffffff' : '#f1f5f9'}
                   fontSize="9.5"
                   fontFamily="JetBrains Mono, monospace"
                   fontWeight="800"
@@ -467,8 +471,8 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
                   {val}%
                 </text>
 
-                {/* Interactive Drag Handle (shown on hovered/active sector) */}
-                {isHovered && (
+                {/* Interactive Drag Handle (shown on hovered/selected sector) */}
+                {isHighlighted && (
                   <g className="pointer-events-none" filter="url(#handleGlow)">
                     <circle
                       cx={handlePos.x}
@@ -715,8 +719,8 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
             <g id="shot-trajectories" className="pointer-events-none">
               {sectorConfigs.map((sec) => {
                 const val = player.fieldSectors[sec.key];
-                const isHovered = activeSectorKey === sec.key;
-                if (!isHovered && activeSectorKey !== null) return null; // focus on hovered
+                const isHighlighted = activeSectorKey === sec.key;
+                if (!isHighlighted && hoveredSectorKey !== null) return null; // focus on hovered
 
                 const midAngle = (sec.startAngle + sec.endAngle) / 2;
                 const boundaryPt = polarToCartesian(center, center, groundRadius - 8, midAngle);
@@ -726,7 +730,7 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
                 const rayColor = getStrengthColor(val, true);
 
                 return (
-                  <g key={`ray-${sec.key}`} opacity={isHovered ? 1 : 0.45}>
+                  <g key={`ray-${sec.key}`} opacity={isHighlighted ? 1 : 0.45}>
                     {/* Main trajectory shot line */}
                     <line
                       x1={sweetSpotX}
@@ -734,14 +738,14 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
                       x2={boundaryPt.x}
                       y2={boundaryPt.y}
                       stroke={rayColor}
-                      strokeWidth={isHovered ? 2.5 : 1.2}
+                      strokeWidth={isHighlighted ? 2.5 : 1.2}
                       strokeDasharray={val >= 85 ? 'none' : '4,2'}
                     />
                     {/* Boundary Impact Dot */}
                     <circle
                       cx={boundaryPt.x}
                       cy={boundaryPt.y}
-                      r={isHovered ? 4.5 : 2.5}
+                      r={isHighlighted ? 4.5 : 2.5}
                       fill={rayColor}
                       stroke="#0f172a"
                       strokeWidth="1"
@@ -827,97 +831,146 @@ export const WagonWheelChart: React.FC<WagonWheelChartProps> = ({
             ▲ BOWLER RUN-UP (STRAIGHT)
           </text>
         </svg>
+      </div>
 
-        {/* Hover / Active Sector Details & Direct Tuning HUD Card */}
-        {activeSector && (
-          <div className="absolute bottom-2 left-3 right-3 bg-slate-950/95 border border-emerald-500/60 rounded-xl p-3 shadow-2xl backdrop-blur-md transition-all z-10 space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold">
-              <span className="text-white flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                {activeSector.name} ({activeSector.side.toUpperCase()})
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">
-                  Drag on field or tune:
-                </span>
-                <span className="font-mono text-emerald-400 text-sm font-black bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">
-                  {activeSector.value}%
-                </span>
-              </div>
-            </div>
+      {/* ============================================================== */}
+      {/* 🎛️ DEDICATED SECTOR TUNING & SHOT ZONE PANEL (MOVED ASIDE / BELOW GROUND) */}
+      {/* Zero overlap with the ground SVG! */}
+      {/* ============================================================== */}
+      <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 shadow-inner space-y-2.5">
+        {/* Top Header of Tuning Panel */}
+        <div className="flex items-center justify-between text-xs font-bold">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-white font-extrabold">
+              {activeSector.name}
+            </span>
+            <span
+              className={`px-1.5 py-0.2 rounded text-[9px] uppercase font-bold ${
+                activeSector.side === 'off'
+                  ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30'
+                  : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
+              }`}
+            >
+              {activeSector.side.toUpperCase()}
+            </span>
+          </div>
 
-            {/* Direct Quick Slider & Stepper Controls */}
-            {onChangeFieldSector && (
-              <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
-                {/* Minus 5% */}
-                <button
-                  type="button"
-                  onClick={() => handleStepValue(activeSector.key, -5)}
-                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
-                  title="Decrease 5%"
-                >
-                  <Minus className="w-3 h-3" />
-                </button>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">
+              Sector Strength:
+            </span>
+            <span className="font-mono text-emerald-400 text-sm font-black bg-emerald-950/80 px-2.5 py-0.5 rounded border border-emerald-800/80">
+              {activeSector.value}%
+            </span>
+          </div>
+        </div>
 
-                {/* Direct Slider */}
-                <input
-                  type="range"
-                  min="15"
-                  max="99"
-                  value={activeSector.value}
-                  onChange={(e) => onChangeFieldSector(activeSector.key, parseInt(e.target.value))}
-                  className="flex-1 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
-                />
+        {/* Direct Quick Slider & Stepper Controls */}
+        {onChangeFieldSector && (
+          <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+            {/* Minus 5% */}
+            <button
+              type="button"
+              onClick={() => handleStepValue(activeSector.key, -5)}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
+              title="Decrease 5%"
+            >
+              <Minus className="w-3 h-3" />
+            </button>
 
-                {/* Plus 5% */}
-                <button
-                  type="button"
-                  onClick={() => handleStepValue(activeSector.key, 5)}
-                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
-                  title="Increase 5%"
-                >
-                  <Plus className="w-3 h-3" />
-                </button>
+            {/* Direct Slider */}
+            <input
+              type="range"
+              min="15"
+              max="99"
+              value={activeSector.value}
+              onChange={(e) => onChangeFieldSector(activeSector.key, parseInt(e.target.value))}
+              className="flex-1 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+            />
 
-                {/* Quick Presets */}
-                <div className="flex items-center gap-1 pl-1">
-                  <button
-                    type="button"
-                    onClick={() => handleSetPresetValue(activeSector.key, 95)}
-                    className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800 hover:bg-emerald-900 transition cursor-pointer"
-                  >
-                    95%
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSetPresetValue(activeSector.key, 75)}
-                    className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-cyan-950 text-cyan-400 border border-cyan-800 hover:bg-cyan-900 transition cursor-pointer"
-                  >
-                    75%
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSetPresetValue(activeSector.key, 50)}
-                    className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950 text-amber-400 border border-amber-800 hover:bg-amber-900 transition cursor-pointer"
-                  >
-                    50%
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Plus 5% */}
+            <button
+              type="button"
+              onClick={() => handleStepValue(activeSector.key, 5)}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
+              title="Increase 5%"
+            >
+              <Plus className="w-3 h-3" />
+            </button>
 
-            <div className="text-[11px] text-slate-300 leading-tight">
-              <span className="text-emerald-400 font-semibold">Key Shots:</span> {activeSector.primaryShots}
+            {/* Quick Presets */}
+            <div className="flex items-center gap-1 pl-1">
+              <button
+                type="button"
+                onClick={() => handleSetPresetValue(activeSector.key, 95)}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition cursor-pointer ${
+                  activeSector.value >= 90
+                    ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
+                    : 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60 hover:bg-emerald-900'
+                }`}
+              >
+                95%
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPresetValue(activeSector.key, 75)}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition cursor-pointer ${
+                  activeSector.value >= 70 && activeSector.value < 90
+                    ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-sm'
+                    : 'bg-cyan-950/60 text-cyan-400 border-cyan-800/60 hover:bg-cyan-900'
+                }`}
+              >
+                75%
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPresetValue(activeSector.key, 50)}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition cursor-pointer ${
+                  activeSector.value < 70
+                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
+                    : 'bg-amber-950/60 text-amber-400 border-amber-800/60 hover:bg-amber-900'
+                }`}
+              >
+                50%
+              </button>
             </div>
           </div>
         )}
+
+        {/* Detailed Shots Description */}
+        <div className="text-[11px] text-slate-300 leading-tight">
+          <span className="text-emerald-400 font-semibold">Key Shots:</span> {activeSector.primaryShots}
+        </div>
+
+        {/* Sector Quick Switcher Pills */}
+        <div className="pt-1 border-t border-slate-800/60 flex items-center gap-1 overflow-x-auto scrollbar-none text-[10px]">
+          <span className="text-slate-500 font-semibold mr-0.5">Sectors:</span>
+          {(Object.keys(FIELD_SECTOR_LABELS) as (keyof FieldSectors)[]).map((k) => {
+            const isCurrent = activeSector.key === k;
+            const shortName = FIELD_SECTOR_LABELS[k].name.split('/')[0].trim();
+            return (
+              <button
+                key={k}
+                onClick={() => setSelectedSectorKey(k)}
+                className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition cursor-pointer whitespace-nowrap ${
+                  isCurrent
+                    ? 'bg-slate-700 text-white border border-emerald-400/50'
+                    : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200'
+                }`}
+              >
+                {shortName} ({player.fieldSectors[k]}%)
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Footer Info */}
-      <div className="w-full pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+      <div className="w-full pt-1 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
         <span className="flex items-center gap-1">
           <Info className="w-3.5 h-3.5 text-slate-500" />
-          <span>🖱️ Click & drag any sector on the field to dynamically resize</span>
+          <span>Click any slice or use the tuning bar below to adjust strengths</span>
         </span>
         <span className="font-bold text-white">
           Dominance: <span className="text-emerald-400">{metrics.fieldStrengthSide}</span>
