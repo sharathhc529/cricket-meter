@@ -8,6 +8,7 @@ import {
   Sparkles,
   Save,
   Check,
+  RefreshCw,
 } from 'lucide-react';
 import { CricketerProfile } from '../types/cricket';
 
@@ -65,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Global Action Toolbar */}
         <div className="flex items-center flex-wrap gap-2">
-          {/* Quick Save & Sync JSON Button */}
+          {/* Quick Sync Button (In-memory and LocalStorage sync, no file download) */}
           <button
             onClick={handleQuickSave}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg border shadow-md transition cursor-pointer ${
@@ -73,10 +74,14 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-emerald-500/30'
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/50 shadow-emerald-950/40'
             }`}
-            title="Instantly save changes to localStorage and download synced JSON file"
+            title="Instantly sync and save current roster"
           >
-            {syncedToast ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Save className="w-3.5 h-3.5 text-emerald-200" />}
-            <span>{syncedToast ? 'Saved & Synced!' : 'Save & Sync JSON'}</span>
+            {syncedToast ? (
+              <Check className="w-3.5 h-3.5 text-slate-950" />
+            ) : (
+              <RefreshCw className="w-3.5 h-3.5 text-emerald-200" />
+            )}
+            <span>{syncedToast ? 'Synced!' : 'Sync'}</span>
           </button>
 
           {/* Compare Button */}

@@ -355,24 +355,13 @@ export const App: React.FC = () => {
     }
   };
 
-  // Instant Save and Sync JSON database
+  // Instant Sync state & database without downloading file
   const handleSaveAndSyncJson = () => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
       localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(groups));
-
-      const jsonString = JSON.stringify(players, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `cricmeter_players_${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Failed to sync and download JSON', err);
+      console.error('Failed to sync to localStorage', err);
     }
   };
 
