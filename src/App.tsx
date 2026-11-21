@@ -355,6 +355,27 @@ export const App: React.FC = () => {
     }
   };
 
+  // Instant Save and Sync JSON database
+  const handleSaveAndSyncJson = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+      localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(groups));
+
+      const jsonString = JSON.stringify(players, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `cricmeter_players_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to sync and download JSON', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
       {/* Top Header */}
@@ -365,6 +386,7 @@ export const App: React.FC = () => {
         onOpenCompareModal={() => setIsCompareModalOpen(true)}
         onOpenExportImportModal={() => setIsExportImportModalOpen(true)}
         onResetDefaults={handleResetDefaults}
+        onSaveAndSyncJson={handleSaveAndSyncJson}
       />
 
       {/* Main Content Area */}
@@ -425,7 +447,11 @@ export const App: React.FC = () => {
               </button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RadarChart player={activePlayer} metrics={metrics} />
+              <RadarChart
+                player={activePlayer}
+                metrics={metrics}
+                onChangeParameter={handleChangeParameter}
+              />
               <WagonWheelChart
                 player={activePlayer}
                 metrics={metrics}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Download,
   Upload,
@@ -6,6 +6,8 @@ import {
   GitCompare,
   RotateCcw,
   Sparkles,
+  Save,
+  Check,
 } from 'lucide-react';
 import { CricketerProfile } from '../types/cricket';
 
@@ -16,6 +18,7 @@ interface HeaderProps {
   onOpenCompareModal: () => void;
   onOpenExportImportModal: () => void;
   onResetDefaults: () => void;
+  onSaveAndSyncJson: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -25,7 +28,16 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCompareModal,
   onOpenExportImportModal,
   onResetDefaults,
+  onSaveAndSyncJson,
 }) => {
+  const [syncedToast, setSyncedToast] = useState(false);
+
+  const handleQuickSave = () => {
+    onSaveAndSyncJson();
+    setSyncedToast(true);
+    setTimeout(() => setSyncedToast(false), 2200);
+  };
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80 px-4 lg:px-8 py-3.5 transition-all">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -53,6 +65,20 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Global Action Toolbar */}
         <div className="flex items-center flex-wrap gap-2">
+          {/* Quick Save & Sync JSON Button */}
+          <button
+            onClick={handleQuickSave}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg border shadow-md transition cursor-pointer ${
+              syncedToast
+                ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-emerald-500/30'
+                : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/50 shadow-emerald-950/40'
+            }`}
+            title="Instantly save changes to localStorage and download synced JSON file"
+          >
+            {syncedToast ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Save className="w-3.5 h-3.5 text-emerald-200" />}
+            <span>{syncedToast ? 'Saved & Synced!' : 'Save & Sync JSON'}</span>
+          </button>
+
           {/* Compare Button */}
           <button
             onClick={onOpenCompareModal}
@@ -82,11 +108,11 @@ export const Header: React.FC<HeaderProps> = ({
             <span>New Cricketer</span>
           </button>
 
-          {/* Reset to Factory Defaults */}
+          {/* Reset to Default Roster */}
           <button
             onClick={onResetDefaults}
             className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent hover:border-slate-700 transition cursor-pointer"
-            title="Reset roster to original 7 default cricket legends"
+            title="Reset roster to original Main and Supporting players"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Reset</span>
