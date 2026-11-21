@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { CricketerProfile, FieldSectors, PlayerParameters } from './types/cricket';
 import { DEFAULT_PLAYERS, DEFAULT_GROUPS } from './data/defaultPlayers';
+import { LOCAL_PLAYERS, LOCAL_GROUPS } from './data/localPlayers';
+
+const ALL_ROSTER_PLAYERS = [...LOCAL_PLAYERS, ...DEFAULT_PLAYERS];
+const ALL_ROSTER_GROUPS = Array.from(new Set([...LOCAL_GROUPS, ...DEFAULT_GROUPS]));
 import { calculateStrengthMetrics, PARAMETER_METADATA } from './utils/strengthCalculator';
 import { Header } from './components/Header';
 import { PlayerSelector } from './components/PlayerSelector';
@@ -23,9 +27,9 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 
-const STORAGE_KEY = 'cricmeter_players_v1';
+const STORAGE_KEY = 'cricmeter_players_v4';
 const VISIBILITY_STORAGE_KEY = 'cricmeter_visibility_v1';
-const GROUPS_STORAGE_KEY = 'cricmeter_groups_v1';
+const GROUPS_STORAGE_KEY = 'cricmeter_groups_v4';
 
 export const App: React.FC = () => {
   // Load saved cricketers from localStorage or use defaults
@@ -39,7 +43,7 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error('Error reading localStorage', err);
     }
-    return DEFAULT_PLAYERS;
+    return LOCAL_PLAYERS;
   });
 
   // Squads / Groups state
@@ -53,11 +57,11 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error('Error reading groups', err);
     }
-    return DEFAULT_GROUPS;
+    return LOCAL_GROUPS;
   });
 
   const [activePlayerId, setActivePlayerId] = useState<string>(() => {
-    return players[0]?.id || 'virat-kohli';
+    return players[0]?.id || 'sharath-slv-f-304';
   });
 
   // Section show / hide mechanism state
@@ -342,10 +346,10 @@ export const App: React.FC = () => {
 
   // Reset to default roster
   const handleResetDefaults = () => {
-    if (window.confirm('Reset cricketer roster back to original 7 default cricket legends?')) {
-      setPlayers(DEFAULT_PLAYERS);
-      setGroups(DEFAULT_GROUPS);
-      setActivePlayerId(DEFAULT_PLAYERS[0].id);
+    if (window.confirm('Reset cricketer roster back to the main squad roster?')) {
+      setPlayers(LOCAL_PLAYERS);
+      setGroups(LOCAL_GROUPS);
+      setActivePlayerId(LOCAL_PLAYERS[0].id);
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(GROUPS_STORAGE_KEY);
     }
