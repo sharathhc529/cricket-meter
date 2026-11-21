@@ -85,7 +85,7 @@ export const OverviewCards: React.FC<OverviewCardsProps> = ({ player, metrics })
             <span className="font-mono font-bold text-rose-400 text-xs">{metrics.bowlingScore}</span>
           </div>
           <div className="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800/50">
-            <span className="text-slate-400 block">Clutch IQ</span>
+            <span className="text-slate-400 block">Pressure IQ</span>
             <span className="font-mono font-bold text-cyan-400 text-xs">{metrics.mentalClutchScore}</span>
           </div>
         </div>
