@@ -60,7 +60,7 @@ const RADAR_AXIS_CONFIGS: RadarAxisConfig[] = [
   {
     key: 'clutch',
     label: 'Pressure Handling & Crisis',
-    shortLabel: 'Pressure Handling',
+    shortLabel: 'Pressure',
     icon: '🔥',
     description: 'Holding nerves under intense match pressure, tight finishes, and crisis management.',
     paramKeys: ['pressureHandlingClutch', 'confidenceLevel'],
@@ -92,9 +92,9 @@ export const RadarChart: React.FC<RadarChartProps> = ({
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const size = 390;
+  const size = 440;
   const center = size / 2;
-  const radius = center - 58;
+  const radius = 135;
   const numAxes = RADAR_AXIS_CONFIGS.length;
   const angleStep = (Math.PI * 2) / numAxes;
 
@@ -226,7 +226,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
         <svg
           ref={svgRef}
           viewBox={`0 0 ${size} ${size}`}
-          className="w-full max-w-[370px] h-auto drop-shadow-2xl select-none touch-none"
+          className="w-full max-w-[400px] h-auto drop-shadow-2xl select-none touch-none"
         >
           <defs>
             {/* Emerald gradient for primary player */}
