@@ -27,9 +27,9 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 
-const STORAGE_KEY = 'cricmeter_players_v6';
+const STORAGE_KEY = 'cricmeter_players_v7';
 const VISIBILITY_STORAGE_KEY = 'cricmeter_visibility_v1';
-const GROUPS_STORAGE_KEY = 'cricmeter_groups_v6';
+const GROUPS_STORAGE_KEY = 'cricmeter_groups_v7';
 
 export const App: React.FC = () => {
   // Load saved cricketers from localStorage or use defaults

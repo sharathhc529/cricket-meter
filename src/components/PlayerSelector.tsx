@@ -235,12 +235,12 @@ export const PlayerSelector: React.FC<PlayerSelectorProps> = ({
                   }`}
                 >
                   <img
-                    src={player.avatarUrl || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=150&auto=format&fit=crop&q=80'}
+                    src={player.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(player.name)}&background=047857&color=ffffff&bold=true`}
                     alt={player.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=150&auto=format&fit=crop&q=80';
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(player.name)}&background=047857&color=ffffff&bold=true`;
                     }}
                   />
                 </div>

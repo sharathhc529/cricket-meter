@@ -543,7 +543,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     battingHand: 'Right-hand bat',
     bowlingStyle: 'Right-arm fast',
     jerseyNumber: 31,
-    avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
     bio: 'Squad pace spearhead with good top-end speed, testing batsmen with sharp incoming deliveries.',
     group: 'Main Players',
     isArchived: false,
