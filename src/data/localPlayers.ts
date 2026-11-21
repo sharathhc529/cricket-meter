@@ -1,6 +1,6 @@
 import { CricketerProfile } from '../types/cricket';
 
-export const LOCAL_GROUPS = ['Main Squad'];
+export const LOCAL_GROUPS = ['Main Players', 'Supporting Players'];
 
 export const LOCAL_PLAYERS: CricketerProfile[] = [
   // ==========================================
@@ -16,7 +16,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 18,
     avatarUrl: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=150&auto=format&fit=crop&q=80',
     bio: 'Chase Master and modern batting legend renowned for unmatched fitness and supreme cover drive execution.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Top Order', 'Chase Master', 'Legend'],
     parameters: {
@@ -37,7 +37,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 45,
     avatarUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=150&auto=format&fit=crop&q=80',
     bio: 'Hitman of world cricket, legendary for effortless six-hitting ability and aggressive pull shots.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Opener', 'Pull Shot Master', 'Six Hitter'],
     parameters: {
@@ -58,7 +58,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 93,
     avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=150&auto=format&fit=crop&q=80',
     bio: 'Premier all-format strike weapon. Possesses pinpoint yorker precision and icy calm nerve under pressure.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Death Yorker King', 'Strike Bowler', 'Zero Extras'],
     parameters: {
@@ -74,8 +74,8 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
   // LOCAL COMMUNITY / SQUAD CRICKETERS
   // ==========================================
   {
-    id: 'sharath-slv-f-304',
-    name: 'Sharath Slv F 304',
+    id: 'sharath',
+    name: 'Sharath',
     country: 'SLV',
     role: 'batting_allrounder',
     battingHand: 'Right-hand bat',
@@ -83,7 +83,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 10,
     avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
     bio: 'Dynamic talisman and key all-rounder of the squad. Dominant stroke-maker, electric fielder, and reliable clutch performer.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Squad Leader', 'Clutch All-Rounder', 'Power Striker'],
     parameters: {
@@ -104,7 +104,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 1,
     avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
     bio: 'Solid opening batsman. Strong defensive technique with excellent stroke placement through covers and mid-wicket.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Opener', 'Anchor', 'Cover Drive'],
     parameters: {
@@ -125,7 +125,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 21,
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     bio: 'Reliable top-order batsman who reads the match situation well and anchors partnerships.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Top Order', 'Partnership Builder', 'Technique'],
     parameters: {
@@ -146,7 +146,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 3,
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     bio: 'Crowd favorite aggressive batsman and energetic seamer. Plays entertaining high-strike-rate knocks.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Powerplay Striker', 'Seam Bowler', 'Crowd Favorite'],
     parameters: {
@@ -167,7 +167,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 27,
     avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
     bio: 'Composed middle-order batsman with great patience and ability to pierce the infield.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Middle Order', 'Gap Finder', 'Calm Temperament'],
     parameters: {
@@ -188,7 +188,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 41,
     avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
     bio: 'Hard-hitting lower-middle order batsman and useful change-up bowler during middle overs.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Finisher', 'Medium Pace', 'Crisis Batting'],
     parameters: {
@@ -209,7 +209,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 43,
     avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
     bio: 'Consistent stroke-maker with quick hands against spin bowling and sharp running between wickets.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Middle Order', 'Spin Specialist', 'Running'],
     parameters: {
@@ -230,7 +230,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 34,
     avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
     bio: 'Disciplined seamer who bowls tight wicket-to-wicket lines, supported by gritty lower-order batting.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Seamer', 'Wicket to Wicket', 'Tight Lines'],
     parameters: {
@@ -251,7 +251,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 13,
     avatarUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=150&auto=format&fit=crop&q=80',
     bio: 'Tactical off-spin specialist who controls the scoring rate in powerplays and middle overs.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Off-Spin', 'Powerplay Bowling', 'Economy'],
     parameters: {
@@ -272,7 +272,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 32,
     avatarUrl: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150&auto=format&fit=crop&q=80',
     bio: 'Dependable top-order batsman who excels at back-foot punches and rotating the strike.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Top Order', 'Strike Rotator', 'Dependable'],
     parameters: {
@@ -293,7 +293,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 15,
     avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
     bio: 'Energetic team player who contributes with quick runs down the order and tidy medium pace spells.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['All-Rounder', 'Energetic', 'Team Player'],
     parameters: {
@@ -314,7 +314,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 7,
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     bio: 'Primary wicketkeeper of the squad. Agile behind the stumps with sharp stumping reflex and aggressive counter-attacking bat.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Wicketkeeper', 'Lightning Stumping', 'Finisher'],
     parameters: {
@@ -335,7 +335,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 4,
     avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=150&auto=format&fit=crop&q=80',
     bio: 'Accurate seam bowler who exploits early morning moisture and extracts seam movement.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Seam Movement', 'New Ball', 'Disciplined'],
     parameters: {
@@ -356,7 +356,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 22,
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     bio: 'Patient batsman with elegant flick shots off the pads and good situational game sense.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Anchor', 'Flick Shot', 'Game Sense'],
     parameters: {
@@ -377,7 +377,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 8,
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     bio: 'Crafty spin bowler who builds dot-ball pressure and forces rash strokes from opposing batsmen.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Off-Spin', 'Dot Ball Pressure', 'Flight & Drift'],
     parameters: {
@@ -398,7 +398,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 5,
     avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
     bio: 'Experienced team stalwart. Steady medium pacer with great discipline and clutch lower-order batting.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Veteran', 'Steady Seam', 'Clutch'],
     parameters: {
@@ -419,7 +419,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 12,
     avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
     bio: 'Young and attacking stroke player who loves taking on the boundary ropes in the powerplay.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Attacking', 'Lofted Drives', 'Powerplay'],
     parameters: {
@@ -440,7 +440,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 33,
     avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
     bio: 'Reliable fast-medium bowler with good stamina and handy hard-hitting lower down the order.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Fast-Medium', 'Hard Hitter', 'Stamina'],
     parameters: {
@@ -461,7 +461,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 9,
     avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
     bio: 'Resilient batsman who steadies the ship after early wickets and rotates strike smoothly.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Anchor', 'Crisis Manager', 'Steady'],
     parameters: {
@@ -482,7 +482,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 44,
     avatarUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=150&auto=format&fit=crop&q=80',
     bio: 'Versatile all-rounder who can bat in any position and bowl dependable overs in the middle phase.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Versatile', 'Middle Overs', 'Utility Player'],
     parameters: {
@@ -503,7 +503,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 11,
     avatarUrl: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150&auto=format&fit=crop&q=80',
     bio: 'Hardworking seamer who hits hard lengths consistently and troubles batsmen with awkward bounce.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Seamer', 'Hard Lengths', 'Bounce'],
     parameters: {
@@ -524,7 +524,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 10,
     avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
     bio: 'Dominant stroke-maker with textbook straight drives and quick footwork against medium pacers.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Top Order', 'Straight Drive', 'Clean Striker'],
     parameters: {
@@ -545,7 +545,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 31,
     avatarUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=150&auto=format&fit=crop&q=80',
     bio: 'Squad pace spearhead with good top-end speed, testing batsmen with sharp incoming deliveries.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Pace Spearhead', 'Speedster', 'Incoming Ball'],
     parameters: {
@@ -566,7 +566,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 6,
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     bio: 'Disciplined off-spinner who maintains tight lines and induces mistimed lofted shots.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Off-Spin', 'Tight Lines', 'Economical'],
     parameters: {
@@ -587,7 +587,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 54,
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     bio: 'Experienced middle-order batsman known for his composure in close finishes and reliable fielding.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Middle Order', 'Composure', 'Close Finishes'],
     parameters: {
@@ -608,7 +608,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 2,
     avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
     bio: 'Stylish left-handed batsman with exquisite timing through the off side and quick running between wickets.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Left-Handed', 'Off-Side Elegance', 'Quick Runner'],
     parameters: {
@@ -629,7 +629,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 24,
     avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
     bio: 'Energetic all-rounder with powerful lower-order hitting and brisk bowling with genuine pace.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['All-Rounder', 'Power Striker', 'Energetic'],
     parameters: {
@@ -650,7 +650,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 23,
     avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
     bio: 'Steady medium-fast bowler who maintains pressure by starving batsmen of boundary opportunities.',
-    group: 'Main Squad',
+    group: 'Main Players',
     isArchived: false,
     tags: ['Seam Bowler', 'Dot Balls', 'Pressure Creator'],
     parameters: {
@@ -671,7 +671,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 17,
     avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
     bio: 'Solid middle-order anchor with great temperament and sharp running between wickets.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['Anchor', 'Middle Order', 'Dependable'],
     parameters: {
@@ -692,7 +692,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 28,
     avatarUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=150&auto=format&fit=crop&q=80',
     bio: 'Hardworking all-rounder who breaks partnerships with change of pace and hits big sixes in slog overs.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['All-Rounder', 'Slog Overs', 'Change of Pace'],
     parameters: {
@@ -713,7 +713,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 14,
     avatarUrl: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150&auto=format&fit=crop&q=80',
     bio: 'Patient batsman with sound defensive judgment, capable of holding up one end while others attack.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['Anchor', 'Solid Defense', 'Patience'],
     parameters: {
@@ -734,7 +734,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 19,
     avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
     bio: 'Astute spin bowler who uses flight and variation of pace to outthink attacking batsmen.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['Off-Break', 'Flight & Drift', 'Deceptive'],
     parameters: {
@@ -755,7 +755,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 88,
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     bio: 'Accurate seam bowler who bowls tight maiden overs and creates pressure at the start of the innings.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['Seam Bowler', 'Maiden Overs', 'Economy'],
     parameters: {
@@ -776,7 +776,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 30,
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     bio: 'Clean-hitting batsman and handy seamer who excels in pressure run chases.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['All-Rounder', 'Clean Hitter', 'Run Chaser'],
     parameters: {
@@ -797,7 +797,7 @@ export const LOCAL_PLAYERS: CricketerProfile[] = [
     jerseyNumber: 20,
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     bio: 'Sharp and quick runner between wickets with fine placement through point and covers.',
-    group: 'Main Squad',
+    group: 'Supporting Players',
     isArchived: false,
     tags: ['Placement', 'Quick Running', 'Sharp Outfielder'],
     parameters: {

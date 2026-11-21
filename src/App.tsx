@@ -27,9 +27,9 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 
-const STORAGE_KEY = 'cricmeter_players_v4';
+const STORAGE_KEY = 'cricmeter_players_v6';
 const VISIBILITY_STORAGE_KEY = 'cricmeter_visibility_v1';
-const GROUPS_STORAGE_KEY = 'cricmeter_groups_v4';
+const GROUPS_STORAGE_KEY = 'cricmeter_groups_v6';
 
 export const App: React.FC = () => {
   // Load saved cricketers from localStorage or use defaults
@@ -61,7 +61,7 @@ export const App: React.FC = () => {
   });
 
   const [activePlayerId, setActivePlayerId] = useState<string>(() => {
-    return players[0]?.id || 'sharath-slv-f-304';
+    return players[0]?.id || 'sharath';
   });
 
   // Section show / hide mechanism state
